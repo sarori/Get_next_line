@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strchr_idx.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sapark <sapark@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/18 22:32:56 by sapark            #+#    #+#             */
-/*   Updated: 2019/06/06 23:57:08 by sapark           ###   ########.fr       */
+/*   Created: 2019/06/02 17:15:35 by sapark            #+#    #+#             */
+/*   Updated: 2019/06/02 17:24:03 by sapark           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# define BUFF_SIZE 100
-# include "libft/libft.h"
+#include "libft.h"
 
-# include <fcntl.h>
-# include <unistd.h>
+int	ft_strchr_idx(const char *s, char c)
+{
+	int	i;
 
-int	get_next_line(const int fd, char **line);
-
-#endif
+	i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == c)
+			break ;
+		i++;
+	}
+	if (s[i] == '\0')
+		return (-1);
+	return (i);
+}

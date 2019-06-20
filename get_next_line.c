@@ -5,79 +5,62 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sapark <sapark@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/18 22:32:29 by sapark            #+#    #+#             */
-/*   Updated: 2019/05/28 20:27:42 by sapark           ###   ########.fr       */
+/*   Created: 2019/06/01 15:13:24 by sapark            #+#    #+#             */
+/*   Updated: 2019/06/06 23:29:24 by sapark           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h> //open함수 only
-#include <stdio.h>
 
-static int		line_check(const int fd, int idx, char **line, char **res)
+static int	line_check(int idx, char **line, char **res)
 {
-	*line = ft_strsub(res[fd], 0, idx);
-	ft_strcpy(res[fd], &res[fd][idx + 1]);
+	*line = ft_strsub(*res, 0, idx);
+	ft_strcpy(*res, *res + idx + 1);
 	return (1);
 }
 
-static void		element_check(const int fd, char **res,
-								char *buf, int	read_count)
+static int	final_line_check(int idx, char **line, char **res)
+{
+	*line = ft_strsub(*res, 0, idx);
+	ft_strdel(res);
+	return (1);
+}
+
+static void	element_check(char **res,
+	char *buf, int read_count)
 {
 	char	*tmp;
 
-	if (BUFF_SIZE > read_count)
-		buf[read_count] = '\0';
-	else
-		buf[BUFF_SIZE] = '\0';
-	tmp = ft_strjoin(res[fd], buf);
-	free(res[fd]);
-	res[fd] = tmp;
+	buf[read_count] = '\0';
+	tmp = ft_strjoin(*res, buf);
+	free(*res);
+	*res = tmp;
 }
 
-int		get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line)
 {
 	int			idx;
 	int			read_count;
 	char		buf[BUFF_SIZE + 1];
 	static char	*res[4096] = {0};
 
-	idx = 0;
-	if(!res[fd])
+	if (read(fd, buf, 0) == -1 || fd < 0 || fd > 4096 || !line)
+		return (-1);
+	if (!res[fd])
 		res[fd] = ft_strnew(1);
 	while ((read_count = read(fd, buf, BUFF_SIZE)) > 0)
 	{
-		element_check(fd, res, buf, read_count);
+		element_check(&res[fd], buf, read_count);
 		if ((idx = ft_strchr_idx(res[fd], '\n')) >= 0)
-			return (line_check(fd, idx, line, res));
+			return (line_check(idx, line, &res[fd]));
 		else if ((BUFF_SIZE > read_count) && idx < 0)
-			return (line_check(fd, ft_strlen(res[fd]), line, res));
+			return (final_line_check(ft_strlen(res[fd]), line, &res[fd]));
 	}
-	if (res[fd])
+	if (res[fd][0])
 	{
-		while ((idx = ft_strchr_idx(res[fd], '\n')) >= 0)
-			return (line_check(fd, idx, line, res));
-	}
-	if (read_count == 0 && !res[fd])
-		return (0);
-	else
-		return (-1);
-}
-
-int	main(int ac, char **av)
-{
-	if (ac != 2)
-		return (0);
-
-	char	*line = NULL;
-	int		fd = open(av[1], O_RDONLY);
-
-	while (get_next_line(fd, &line) > 0)
-	{
-		printf("[read line] : %s\n", line);
-		free(line);
-		line = NULL;
+		if ((idx = ft_strchr_idx(res[fd], '\n')) >= 0)
+			return (line_check(idx, line, &res[fd]));
+		return (final_line_check(ft_strlen(res[fd]), line, &res[fd]));
 	}
 	return (0);
 }
-
