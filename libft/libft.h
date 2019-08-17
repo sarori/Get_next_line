@@ -6,7 +6,7 @@
 /*   By: sapark <sapark@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/17 21:30:51 by sapark            #+#    #+#             */
-/*   Updated: 2019/06/02 17:21:28 by sapark           ###   ########.fr       */
+/*   Updated: 2019/07/31 16:24:17 by sapark           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 # include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
+# include <fcntl.h>
+# include <unistd.h>
+
+# define BUFF_SIZE 100
 
 typedef struct		s_list
 {
@@ -97,4 +101,8 @@ int					ft_number_length(int n);
 int					ft_abs(int num);
 void				ft_bubble_sort(int arr[], int count);
 int					ft_strchr_idx(const char *s, char c);
+char				*ft_strtrimby(char const *s, char c);
+int					ft_pow(int base, int times);
+
+int					get_next_line(const int fd, char **line);
 #endif
